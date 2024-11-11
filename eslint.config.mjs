@@ -9,7 +9,6 @@ export default tseslint.config(
   eslint.configs.recommended,
   stylistic.configs.customize({
     semi: true,
-    indent: 2,
     arrowParens: true,
   }),
   ...tseslint.configs.stylisticTypeChecked,
@@ -34,10 +33,6 @@ export default tseslint.config(
             '&&': 'before',
           },
         },
-      ],
-      '@stylistic/newline-per-chained-call': [
-        'warn',
-        { ignoreChainWithDepth: 1 },
       ],
       '@stylistic/key-spacing': ['warn'],
       '@stylistic/eol-last': ['warn'],

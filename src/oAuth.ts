@@ -1,18 +1,20 @@
-import express from 'express';
 import { google } from 'googleapis';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
+import type { APICretentials } from './dlALLFile';
+
+import express from 'express';
 import logger from './logger';
 
 import type { Request, Response } from 'express';
 
-export const oAuth = async () => {
+export const oAuth = () => {
   const app = express();
   const PORT = 3000;
 
   const credentials = JSON.parse(
     readFileSync(resolve('getToken.json'), 'utf-8'),
-  );
+  ) as APICretentials;
   const { client_id, client_secret, redirect_uris } = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
     client_id,

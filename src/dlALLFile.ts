@@ -1,19 +1,32 @@
-import { google } from 'googleapis';
-import { readFileSync, existsSync, mkdirSync, createWriteStream } from 'fs';
+import { google, drive_v3 } from 'googleapis';
+import type { OAuth2Client, Credentials } from 'google-auth-library';
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import logger from './logger';
 
+export interface APICretentials {
+  installed: {
+    client_id: string;
+    project_id: string;
+    auth_uri: string;
+    token_uri: string;
+    auth_provider_x509_cert_url: string;
+    client_secret: string;
+    redirect_uris: string[];
+  };
+}
+
 export class FolderAPI {
   folderId: string;
-  private oAuth2Client: any;
-  private drive: any;
+  private oAuth2Client: OAuth2Client;
+  private drive: drive_v3.Drive;
 
   constructor(folderId: string) {
     this.folderId = folderId;
 
     const credentials = JSON.parse(
       readFileSync(resolve('getToken.json'), 'utf-8'),
-    );
+    ) as APICretentials;
     const { client_id, client_secret, redirect_uris } = credentials.installed;
 
     this.oAuth2Client = new google.auth.OAuth2(
@@ -24,7 +37,7 @@ export class FolderAPI {
 
     const token = JSON.parse(
       readFileSync(resolve('.cache', 'APIToken.json'), 'utf-8'),
-    );
+    ) as Credentials;
     this.oAuth2Client.setCredentials(token);
 
     this.drive = google.drive({ version: 'v3', auth: this.oAuth2Client });
@@ -38,7 +51,7 @@ export class FolderAPI {
       });
 
       if (res.data.files && res.data.files.length > 0) {
-        res.data.files.forEach((file: any) => {
+        res.data.files.forEach((file) => {
           logger.info(`${file.name} (${file.id})`);
         });
       }
@@ -64,7 +77,11 @@ export class FolderAPI {
         }
 
         for (const file of res.data.files) {
-          await this.downloadFile(file.id, resolve(downloadPath, file.name.split('-')[0] + '.cpp'));
+          if (!file.id || !file.name) continue;
+          await this.downloadFile(
+            file.id,
+            resolve(downloadPath, file.name.split('-')[0] + '.cpp'),
+          );
         }
       }
       else {
@@ -76,34 +93,22 @@ export class FolderAPI {
     }
   };
 
-  private downloadFile = async (fileId: string, destPath: string) => {
-    return new Promise<void>(async (resolve, reject) => {
-      try {
-        const res = await this.drive.files.get(
-          {
-            fileId: fileId,
-            alt: 'media',
-          },
-          { responseType: 'stream' },
-        );
+  private async downloadFile(fileId: string, destPath: string) {
+    try {
+      const response = await this.drive.files.get(
+        {
+          fileId: fileId,
+          alt: 'media',
+        },
+        { responseType: 'stream' },
+      );
 
-        const fileStream = createWriteStream(destPath);
+      const data = await new Response(response.data).arrayBuffer();
 
-        res.data
-          .pipe(fileStream)
-          .on('finish', () => {
-            logger.debug(`Downloaded ${destPath}`);
-            resolve();
-          })
-          .on('error', (err: any) => {
-            logger.error('Download error:', err);
-            reject(err);
-          });
-      }
-      catch (error) {
-        logger.error('Error downloading file:', error);
-        reject(error);
-      }
-    });
+      writeFileSync(destPath, new Uint8Array(data));
+    }
+    catch (error) {
+      logger.error('Error downloading file:', error);
+    }
   };
 }

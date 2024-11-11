@@ -8,7 +8,6 @@ import {
 } from './judge';
 import { readdirSync, writeFileSync } from 'fs';
 import logger from './logger';
-import { error } from 'console';
 
 export const check = async (input: string, output: string, path: string) => {
   const folder = readdirSync(path);
@@ -78,5 +77,9 @@ export const check = async (input: string, output: string, path: string) => {
       result.push(tem);
     }
   }
-  writeFileSync(resolve('.cache', 'result.json'), JSON.stringify(result, null, 2), 'utf-8');
+  writeFileSync(
+    resolve('.cache', 'result.json'),
+    JSON.stringify(result, null, 2),
+    'utf-8',
+  );
 };
