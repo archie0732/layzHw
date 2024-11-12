@@ -2,9 +2,9 @@
 
 
 <img src="./assert/laugage.jpg" width=50px height=50px>
+
 一個可以自動改作業的厲害東西
 
-<br><br>
 
 請先確定已安裝`bun`
 
