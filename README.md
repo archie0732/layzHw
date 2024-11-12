@@ -1,6 +1,24 @@
 # layzhw
 
-To install dependencies:
+一個可以自動改作業的牛逼東西
+
+<img src="./assert/laugage.jpg" style="width:50%, height:50%">
+
+請先確定已安裝`bun`
+
+- winadow
+
+```sh
+powershell -c "irm bun.sh/install.ps1 | iex"
+```
+
+- linux and macOS
+
+```sh
+curl -fsSL https://bun.sh/install | bash
+```
+
+下載依賴檔
 
 ```bash
 bun install
@@ -8,8 +26,16 @@ bun install
 
 To run:
 
-```bash
-bun run index.ts
+如果你還未開drive的權限
+
+```sh
+bun run oAuth
+```
+
+正式啟用
+
+```sh
+bun run start
 ```
 
 This project was created using `bun init` in bun v1.1.24. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
