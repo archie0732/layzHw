@@ -2,7 +2,7 @@
 
 一個可以自動改作業的厲害東西
 
-<img src="./assert/laugage.jpg" style="width:50px, height:50px">
+<img src="./assert/laugage.jpg" >
 
 請先確定已安裝`bun`
 
