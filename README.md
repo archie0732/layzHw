@@ -1,8 +1,8 @@
 # layzhw
 
-一個可以自動改作業的牛逼東西
+一個可以自動改作業的厲害東西
 
-<img src="./assert/laugage.jpg" style="width:50%, height:50%">
+<img src="./assert/laugage.jpg" style="width:50px, height:50px">
 
 請先確定已安裝`bun`
 
