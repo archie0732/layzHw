@@ -60,7 +60,8 @@ export class FolderAPI {
       }
     }
     catch (error) {
-      logger.error(`💀 發生錯誤:`, error);
+      logger.error(`💀 發生錯誤:`, void error);
+      process.exit(1);
     }
   };
 

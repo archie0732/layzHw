@@ -11,10 +11,26 @@ import logger from './logger';
 
 const aaaaa = async () => {
   if (!existsSync(resolve('.cache', 'APIToken.json'))) {
-    logger.warn('你尚未提供存取權限，請先執行此命令\n$ bun ./src/oAuth.ts');
-    return;
+    await Bun.$`bun ./src/oAuth.ts`;
+    /* logger.warn('你尚未提供存取權限，請先執行此命令\n$ bun ./src/oAuth.ts');
+    return; */
   }
-  const answer = await input({ message: 'drive URL:' });
+
+  const answer = await input({
+    message: 'drive URL:',
+    required: true,
+    validate(value) {
+      if (!value || !/^https:\/\/drive.google.com.+$/.test(value)) {
+        return false;
+      }
+
+      if (value.split('/').length < 5) {
+        return false;
+      }
+
+      return true;
+    },
+  });
 
   const folderid = answer.split('/')[5].trim();
 
